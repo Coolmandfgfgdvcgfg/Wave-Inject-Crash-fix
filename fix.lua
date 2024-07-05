@@ -85,6 +85,6 @@ ofunc = hookfunction(rf.FireServer, function (...)
 		--print("blocked adonis rcall")
 		return nil
 	end
-	print(...)
+	--print(...)
 	return ofunc(...)
 end)
