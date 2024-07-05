@@ -1,3 +1,5 @@
+-- mb for shitty code, kinda just made this real quick to fix wave cause wave is so ass 
+
 local oldfunction; 
 oldfunction = hookfunction(debug.info, function(...)
 	local args = {...}
@@ -7,106 +9,34 @@ oldfunction = hookfunction(debug.info, function(...)
 		return oldfunction(...);
 	end
 end);
-repeat task.wait() until game:IsLoaded()
 
-for Index, Data in next, getgc(true) do
-	if typeof(Data) == "function" and debug.getinfo(Data).name == "Immutable" then
-		hookfunction(Data, function()
-			return function()
-				print("attempted crash")
-			end
-		end)
-	end
-end
+repeat task.wait(0.1) until game:IsLoaded()
 
-
-
-
-for i, v in ipairs(getgc()) do
+for Index, Data in next, getgc() do
 	pcall(function()
-		if type(v) == "function" then
-			local info = debug.getinfo(v)
-			local up = debug.getconstants(v)
-			if table.find(up, "MethodError") and table.find(up, "ServerError") and table.find(up, "ReadError") then
-				print("Hooked 1")
-				hookfunction(v, function()
-					return function()
-						print("method kick")
-					end
-				end)
-			end
-		end 
-	end)
-end
-
-
-for i, v in ipairs(getgc()) do
-	pcall(function()
-		if type(v) == "function" then
-			local info = debug.getinfo(v)
-			local up = debug.getconstants(v)
-			local up2 = debug.getconstants(v)
-			if table.find(up, "Disconnected from server") then
-				print(v)
-				hookfunction(v, function()
-					return function()
-						print("attempt disconnect")
-					end
-				end)
-			end
-		end 
-	end)
-end
-
-for i, v in ipairs(getgc()) do
-	pcall(function()
-		if type(v) == "function" then
-			local info = debug.getinfo(v)
-			local up = debug.getconstants(v)
-			local up2 = debug.getconstants(v)
-			if table.find(up2, "fakePlayer") then
-				print(v)
-				hookfunction(v, function()
-					return  function()
-						print("attempt kill")
-					end
-				end)
-			end
-		end 
-	end)
-end
-
-
-
-for i, v in ipairs(getgc()) do
-	pcall(function()
-		if type(v) == "function" then
-			local info = debug.getinfo(v)
-			local up = debug.getconstants(v)
-			local up2 = debug.getconstants(v)
-			if table.find(up, "Tampering with Client [read rt0001]") and table.find(up, "ReadError") and table.find(up, "Potentially dangerous index") then
-				print(v)
-				hookfunction(v, function()
-					return nil
-				end)
-			end
-		end 
-	end)
-end
-
-
-
-
-for i, v in ipairs(getgc()) do
-	pcall(function()
-		if type(v) == "function" then
-			local info = debug.getinfo(v)
-			if info.source and string.find(info.source, "Anti") then
-
-				print("Found function2:", tostring(v))
-
-			end
-		end 
+		local info = debug.getinfo(Data)
+		local up = debug.getconstants(Data)
+		if typeof(Data) == "function" and info.name == "Immutable" then
+			hookfunction(Data, function()
+				return nil
+			end)
+		elseif typeof(Data) == "function" and table.find(up, "MethodError") and table.find(up, "ServerError") and table.find(up, "ReadError") then
+			hookfunction(v, function()
+				return nil
+			end)
+		elseif typeof(Data) == "function" and table.find(up, "Disconnected from server") then
+			hookfunction(v, function()
+				return nil
+			end)
+		elseif typeof(Data) == "function" and table.find(up, "fakePlayer") then
+			hookfunction(v, function()
+				return nil
+			end)
+		elseif typeof(Data) == "function" and table.find(up, "Tampering with Client [read rt0001]") and table.find(up, "ReadError") and table.find(up, "Potentially dangerous index") then
+			hookfunction(v, function()
+				return nil
+			end)
+		end
 	end)
 end
 
@@ -115,7 +45,9 @@ local oldhmmi
 local oldhmmnc
 oldhmmi = hookmetamethod(game, "__index", function(self, method)
 	if self == LocalPlayer and method:lower() == "kick" then
-		return error("Expected ':' not '.' calling member function Kick", 2)
+		return function()
+			--print("lol dumb adonis")
+		end
 	end
 	return oldhmmi(self, method)
 end)
@@ -144,14 +76,15 @@ function findRemoteEventWithFunction(parent)
 	-- Return nil if no such RemoteEvent is found
 	return nil
 end
+
 local rf = findRemoteEventWithFunction(game:GetService("ReplicatedStorage"))
 local ofunc
 ofunc = hookfunction(rf.FireServer, function (...)
 	local args = {...}
-    if args[2] == "BadMemes" then
-        print("blocked adonis rcall")
-	    return nil
-    end
-    print(...)
-    return ofunc(...)
+	if args[2] == "BadMemes" or table.find(args,"kick") then
+		--print("blocked adonis rcall")
+		return nil
+	end
+	print(...)
+	return ofunc(...)
 end)
