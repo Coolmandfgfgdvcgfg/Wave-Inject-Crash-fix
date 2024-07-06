@@ -88,3 +88,14 @@ ofunc = hookfunction(rf.FireServer, function (...)
 	--print(...)
 	return ofunc(...)
 end)
+
+while task.wait(10) do
+	for Index, Data in next, getgc() do
+		pcall(function()
+			local info = debug.getinfo(Data)
+			if typeof(Data) == "function" and info.name == "Send" then
+				Data("ClientCheck", {0,0},nil)
+			end
+		end)
+	end
+end
