@@ -91,18 +91,35 @@ ofunc = hookfunction(rf.FireServer, function (...)
 	return ofunc(...)
 end)
 local foundfunc = nil
-while task.wait(10) do
-    if foundfunc == nil then
-        for Index, Data in next, getgc() do
+local foundtable1 = nil
+local foundtable2 = nil
+while getgenv().UsedAdonisBypass do
+    if foundfunc == nil and foundtable == nil then
+        for Index, Data in next, getgc(false) do
             pcall(function()
-                local info = debug.getinfo(Data)
-                if typeof(Data) == "function" and info.name == "Send" and islclosure(Data) then
+                local info
+                if type(Data) == "function" then
+                    info = debug.getinfo(Data)
+                end
+                if foundfunc == nil and type(Data) == "function" and info.name == "Send" and islclosure(Data) then
                     foundfunc = Data
-                    Data("ClientCheck", {0,0},nil)
+                end
+            end)
+        end
+        for Index, Data in next, getgc(true) do
+            pcall(function()
+                if foundfunc ~= nil and type(Data) == "table" and Data.CheckClient and Data.Returnables and Data.Send == foundfunc then
+                    --print("Remote: " .. tostring(Data))
+                    foundtable1 = Data
+                end
+                if type(Data) == "table" and Data.Remote and Data.DepsName then
+                    --print("Client: " .. tostring(Data))
+                    foundtable2 = Data
                 end
             end)
         end
     else
-        foundfunc("ClientCheck", {0,0},nil)
+        foundfunc("ClientCheck", {Sent = foundtable1.Sent or 0, Received = foundtable1.Received}, foundtable2.DepsName)
     end
+    task.wait(10)
 end
