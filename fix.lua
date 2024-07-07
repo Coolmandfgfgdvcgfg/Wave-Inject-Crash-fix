@@ -94,7 +94,7 @@ local foundfunc = nil
 local foundtable1 = nil
 local foundtable2 = nil
 while getgenv().UsedAdonisBypass do
-    if foundfunc == nil and foundtable == nil then
+    if foundfunc == nil then
         for Index, Data in next, getgc(false) do
             pcall(function()
                 local info
