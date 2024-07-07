@@ -94,7 +94,7 @@ local foundfunc = nil
 local foundtable1 = nil
 local foundtable2 = nil
 while getgenv().UsedAdonisBypass do
-    if foundfunc == nil or foundtable1 == nil or foundtable2 == nil then
+    if foundfunc == nil and foundtable == nil then
         for Index, Data in next, getgc(false) do
             pcall(function()
                 local info
@@ -109,11 +109,11 @@ while getgenv().UsedAdonisBypass do
         for Index, Data in next, getgc(true) do
             pcall(function()
                 if foundfunc ~= nil and type(Data) == "table" and Data.CheckClient and Data.Returnables and Data.Send == foundfunc then
-                    print("Remote: " .. tostring(Data))
+                    --print("Remote: " .. tostring(Data))
                     foundtable1 = Data
                 end
                 if type(Data) == "table" and Data.Remote and Data.DepsName then
-                    print("Client: " .. tostring(Data))
+                    --print("Client: " .. tostring(Data))
                     foundtable2 = Data
                 end
             end)
@@ -121,5 +121,5 @@ while getgenv().UsedAdonisBypass do
     else
         foundfunc("ClientCheck", {Sent = foundtable1.Sent or 0, Received = foundtable1.Received}, foundtable2.DepsName)
     end
-    task.wait(1)
+    task.wait(10)
 end
