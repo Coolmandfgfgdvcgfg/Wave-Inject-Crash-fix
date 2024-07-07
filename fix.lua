@@ -1,3 +1,5 @@
+getgenv().UsedAdonisBypass = true 
+
 -- mb for shitty code, kinda just made this real quick to fix wave cause wave is so ass 
 
 local oldfunction; 
@@ -88,14 +90,19 @@ ofunc = hookfunction(rf.FireServer, function (...)
 	--print(...)
 	return ofunc(...)
 end)
-
+local foundfunc = nil
 while task.wait(10) do
-	for Index, Data in next, getgc() do
-		pcall(function()
-			local info = debug.getinfo(Data)
-			if typeof(Data) == "function" and info.name == "Send" then
-				Data("ClientCheck", {0,0},nil)
-			end
-		end)
-	end
+    if foundfunc == nil then
+        for Index, Data in next, getgc() do
+            pcall(function()
+                local info = debug.getinfo(Data)
+                if typeof(Data) == "function" and info.name == "Send" and islclosure(Data) then
+                    foundfunc = Data
+                    Data("ClientCheck", {0,0},nil)
+                end
+            end)
+        end
+    else
+        foundfunc("ClientCheck", {0,0},nil)
+    end
 end
