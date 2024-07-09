@@ -1,6 +1,6 @@
 getgenv().UsedAdonisBypass = true 
 
--- mb for shitty code, kinda just made this real quick to fix wave cause wave is so ass 
+-- mb for shitty code, kinda just made this real quick to fix wave stack dtc 
 
 local oldfunction; 
 oldfunction = hookfunction(debug.info, function(...)
