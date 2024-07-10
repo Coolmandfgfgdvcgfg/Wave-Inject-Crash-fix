@@ -1,1 +1,2 @@
-uhhhh simply put the lua script in ur auto exec and it should be fixed, this just simply hooks adonis anticheat and the specific function on auto exec so you wont crash, welcome.
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Coolmandfgfgdvcgfg/Wave-Inject-Crash-fix/main/fix.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Coolmandfgfgdvcgfg/Wave-Inject-Crash-fix/main/fix2.lua"))()
